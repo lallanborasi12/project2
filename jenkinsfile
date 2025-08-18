@@ -23,10 +23,13 @@ node {
             rsync -av --delete --exclude='.git' --exclude='node_modules' ./ ${appDir}
 
             cd ${appDir}
-            sudo npm install
+            sudo npm install -g pm2
             sudo npm run build
             sudo fuser -k 5000/tcp || true
             npm run start
+            pm2 start npm --name "nextjs-app" -- start
+            pm2 save
+            pm2 startup
         """
     }
 }
