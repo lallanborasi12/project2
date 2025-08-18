@@ -23,7 +23,6 @@ node {
             rsync -av --delete --exclude='.git' --exclude='node_modules' ./ ${appDir}
 
             cd ${appDir}
-            sudo apt-get install apache2
             sudo npm install
             sudo npm run build
             sudo fuser -k 5000/tcp || true
