@@ -10,7 +10,7 @@ node {
         echo 'Cloning the repo'
         git(
             branch: 'master',
-            url: ''
+            url: 'https://github.com/lallanborasi12/project2.git'
         )
     }
 
