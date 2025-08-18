@@ -30,7 +30,7 @@ node {
             sudo fuser -k 3000/tcp || true
 
             # Start app in background and save logs
-            nohup npm run start > app.log 2>&1 &
+            nohup npm run start > page.tsx 2>&1 &
         """
     }
 }
