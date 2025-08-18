@@ -10,7 +10,7 @@ node {
         echo 'Cloning the repo'
         git(
             branch: 'master',
-            url: 'https://github.com/lallanborasi12/project2.git'
+            url: 'https://github.com/lallanborasi12/Projet1.git'
         )
     }
 
@@ -26,11 +26,21 @@ node {
             sudo npm install
             sudo npm run build
 
-            # Stop old process if running
-            sudo fuser -k 3000/tcp || true
+            # Install PM2 if not installed
+            if ! command -v pm2 > /dev/null; then
+                sudo npm install -g pm2
+            fi
 
-            # Start app in background and save logs
-            nohup npm run start > page.tsx 2>&1 &
+            # Stop old process if running
+            pm2 stop nextjs-app || true
+            pm2 delete nextjs-app || true
+
+            # Start app with PM2
+            pm2 start npm --name "nextjs-app" -- run start
+
+            # Save process list & enable startup on reboot
+            pm2 save
+            pm2 startup systemd -u jenkins --hp /home/jenkins
         """
     }
 }
