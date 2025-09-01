@@ -1,39 +1,58 @@
-node {
-    def appDir = '/var/www/html3/reactjs-app'
-    def buildDir = 'build'
+pipeline {
+    agent any
 
-    stage('Clean Workspace') {
-        echo 'Cleaning Jenkins Workspace'
-        deleteDir()
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                echo 'Cleaning Jenkins Workspace...'
+                deleteDir()
+            }
+        }
+
+        stage('Checkout Code') {
+            steps {
+                echo 'Pulling latest code from GitHub...'
+                git branch: 'main', url: 'https://github.com/lallanborasi12/project2.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing Node.js dependencies...'
+                sh '''
+                  rm -rf node_modules package-lock.json
+                  npm install
+                  npm install react-scripts@5.0.1 --save
+                '''
+            }
+        }
+
+        stage('Build React App') {
+            steps {
+                echo 'Building React app...'
+                sh 'npm run build'
+            }
+        }
+
+        stage('Deploy to Apache') {
+            steps {
+                echo 'Deploying build to Apache server...'
+                sh '''
+                  sudo rm -rf /var/www/html/*
+                  sudo cp -r build/* /var/www/html/
+                  sudo chown -R www-data:www-data /var/www/html/
+                  sudo systemctl restart apache2
+                '''
+            }
+        }
     }
 
-    stage('Clone Repo') {
-        echo 'Cloning the repo'
-        git(
-            branch: 'master',
-            url: 'https://github.com/lallanborasi12/Projet1.git'
-        )
-    }
-
-    stage('Build React App') {
-        echo 'Installing dependencies & building React app'
-        sh """
-            npm install
-            npm run build
-        """
-    }
-
-    stage('Deploy to Apache') {
-        echo 'Deploying build folder to Apache directory'
-        sh """
-            sudo mkdir -p ${appDir}
-            sudo chown -R jenkins:jenkins ${appDir}
-
-            # Remove old files
-            sudo rm -rf ${appDir}/*
-
-            # Copy new build files
-            sudo cp -r ${buildDir}/* ${appDir}/
-        """
+    post {
+        success {
+            echo '🎉 Deployment successful! Visit your server public IP.'
+        }
+        failure {
+            echo '❌ Build or deployment failed. Please check logs.'
+        }
     }
 }
