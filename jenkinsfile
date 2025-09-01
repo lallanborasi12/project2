@@ -1,58 +1,59 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs "node16"   // Jenkins me NodeJS plugin se pehle Node 16 ya 18 install karo
+    }
+
     stages {
         stage('Clean Workspace') {
             steps {
-                echo 'Cleaning Jenkins Workspace...'
+                echo "Cleaning Jenkins workspace..."
                 deleteDir()
             }
         }
 
         stage('Checkout Code') {
             steps {
-                echo 'Pulling latest code from GitHub...'
-                git branch: 'main', url: 'https://github.com/lallanborasi12/project2.git'
+                git branch: 'main',
+                    url: 'https://github.com/lallanborasi12/project2.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                echo 'Installing Node.js dependencies...'
+                echo "Installing Node.js dependencies..."
                 sh '''
                   rm -rf node_modules package-lock.json
                   npm install
-                  npm install react-scripts@5.0.1 --save
                 '''
             }
         }
 
-        stage('Build React App') {
+        stage('Build Next.js App') {
             steps {
-                echo 'Building React app...'
+                echo "Building Next.js app..."
                 sh 'npm run build'
+            }
+        }
+
+        stage('Export Static Files') {
+            steps {
+                echo "Exporting Next.js app..."
+                sh 'npm run build && npx next export -o out'
             }
         }
 
         stage('Deploy to Apache') {
             steps {
-                echo 'Deploying build to Apache server...'
+                echo "Deploying build to Apache..."
                 sh '''
                   sudo rm -rf /var/www/html/*
-                  sudo cp -r build/* /var/www/html/
+                  sudo cp -r out/* /var/www/html/
                   sudo chown -R www-data:www-data /var/www/html/
                   sudo systemctl restart apache2
                 '''
             }
-        }
-    }
-
-    post {
-        success {
-            echo '🎉 Deployment successful! Visit your server public IP.'
-        }
-        failure {
-            echo '❌ Build or deployment failed. Please check logs.'
         }
     }
 }
