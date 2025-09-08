@@ -1,58 +1,48 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs "node16"   // Jenkins me NodeJS plugin se pehle Node 16 ya 18 install karo
+    environment {
+        APP_DIR = "/var/www/html/reactjs-app"
     }
 
     stages {
         stage('Clean Workspace') {
             steps {
-                echo "Cleaning Jenkins workspace..."
+                echo 'Cleaning Jenkins Workspace'
                 deleteDir()
             }
         }
 
-        stage('Checkout Code') {
+        stage('Clone Repo') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/lallanborasi12/project2.git'
+                echo 'Cloning Repository...'
+                git branch: 'master',
+                    url: 'https://github.com/yourusername/your-repo.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install Dependencies & Build') {
             steps {
-                echo "Installing Node.js dependencies..."
-                sh '''
-                  rm -rf node_modules package-lock.json
-                  npm install
-                '''
+                sh """
+                    sudo mkdir -p $APP_DIR
+                    sudo chown -R jenkins:jenkins $APP_DIR
+                    rsync -av --delete --exclude='.git' --exclude='node_modules' ./ $APP_DIR
+                    cd $APP_DIR
+                    npm install
+                    npm run build
+                """
             }
         }
 
-        stage('Build Next.js App') {
+        stage('Deploy with PM2') {
             steps {
-                echo "Building Next.js app..."
-                sh 'npm run build'
-            }
-        }
-
-        stage('Export Static Files') {
-            steps {
-                echo "Exporting Next.js app..."
-                sh 'npm run build && npx next export -o out'
-            }
-        }
-
-        stage('Deploy to Apache') {
-            steps {
-                echo "Deploying build to Apache..."
-                sh '''
-                  sudo rm -rf /var/www/html/*
-                  sudo cp -r out/* /var/www/html/
-                  sudo chown -R www-data:www-data /var/www/html/
-                  sudo systemctl restart apache2
-                '''
+                sh """
+                    cd $APP_DIR
+                    pm2 stop react-app || true
+                    pm2 delete react-app || true
+                    pm2 start npm --name "react-app" -- run start
+                    pm2 save
+                """
             }
         }
     }
