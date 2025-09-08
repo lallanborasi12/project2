@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        APP_DIR = "/var/www/html/reactjs-app"
+        NODE_HOME = "/usr/bin/node"
+        PATH = "$NODE_HOME:$PATH"
     }
 
     stages {
@@ -13,36 +14,30 @@ pipeline {
             }
         }
 
-        stage('Clone Repo') {
+        stage('Checkout Repository') {
             steps {
-                echo 'Cloning Repository...'
-                git branch: 'master',
-                    url: 'https://github.com/yourusername/your-repo.git'
+                echo 'Cloning Project Repo...'
+                git branch: 'master', url: 'https://github.com/lallanborasi12/project2.git'
             }
         }
 
         stage('Install Dependencies & Build') {
             steps {
-                sh """
-                    sudo mkdir -p $APP_DIR
-                    sudo chown -R jenkins:jenkins $APP_DIR
-                    rsync -av --delete --exclude='.git' --exclude='node_modules' ./ $APP_DIR
-                    cd $APP_DIR
+                echo 'Installing dependencies and building project...'
+                sh '''
                     npm install
                     npm run build
-                """
+                '''
             }
         }
 
         stage('Deploy with PM2') {
             steps {
-                sh """
-                    cd $APP_DIR
-                    pm2 stop react-app || true
-                    pm2 delete react-app || true
-                    pm2 start npm --name "react-app" -- run start
-                    pm2 save
-                """
+                echo 'Deploying application with PM2...'
+                sh '''
+                    pm2 delete project2 || true
+                    pm2 start npm --name "project2" -- run start
+                '''
             }
         }
     }
