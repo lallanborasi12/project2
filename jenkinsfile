@@ -43,12 +43,11 @@ pipeline {
                     npm install
 
                     # Start with PM2 (replace if already running)
-                    pm2 stop react-app || true
-                    pm2 delete react-app || true
-                    pm2 start npm --name "react-app" -- run start
+                    
+                  
 
                     # Save PM2 process list and enable on reboot
-                    pm2 save
+                    
                     pm2 startup systemd -u jenkins --hp /var/lib/jenkins
                 '''
             }
