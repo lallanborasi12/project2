@@ -14,7 +14,7 @@ export default function Home() {
         />
         <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
-            lallan borasi this is my project app
+            lallan borasi@ deep b this is my project appReal-Time Feedback Our health and wellness apps deliver real-time feedback to help users improve habits instantly. Whether you're using a fasting tracker or a calorie counter, get actionable insights as you go—so you can stay consistent.  this mi my update fro hispl AVV @^^
              {"MY REACT AAP"}
             <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
               app/me.tsx
