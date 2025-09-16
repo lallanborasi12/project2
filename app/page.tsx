@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 export default function Home() {
-  return (
+  return (<>
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Image
@@ -14,7 +14,7 @@ export default function Home() {
         />
         <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
-            lallan borasi@ deep b this is my project appReal-Time Feedback Our health and wellness apps deliver real-time feedback to help users improve habits instantly. Whether you're using a fasting tracker or a calorie counter, get actionable insights as you go—so you can stay consistent.  this mi my update fro hispl AVV @^^
+            lallan borasi@ deep b this is my project appReal-Time Feedback Our health and wellness apps deliver real-time feedback to help users improve habits instantly. Whether you're using a fasting tracker or a calorie counter, get actionable insights as you go—so you can stay consistent.  this mi my update fro hispl AVV @^^ @@@@@@this is my project 
              {"MY REACT AAP"}
             <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
               app/me.tsx
@@ -99,6 +99,6 @@ export default function Home() {
           Go to nextjs.org →
         </a>
       </footer>
-    </div>
+    </div></>
   );
 }
